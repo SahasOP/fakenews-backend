@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 import numpy as np
 import pandas as pd
@@ -11,6 +11,7 @@ from nltk.sentiment import SentimentIntensityAnalyzer
 import re
 import os
 import string
+import json 
 
 app = Flask(__name__)
 # Enable CORS with more explicit configuration
@@ -590,7 +591,7 @@ def analyze():
     response = jsonify(result)
     response.headers.add('Access-Control-Allow-Origin', '*')
     response.headers.add('Content-Type', 'application/json')
-    return response
+    return Response(json.dumps(result), mimetype= 'application/json')
 
 # API endpoint for model information
 @app.route('/api/model-info', methods=['GET'])
