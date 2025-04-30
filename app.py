@@ -589,6 +589,7 @@ def analyze():
     # Add CORS headers explicitly
     response = jsonify(result)
     response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Content-Type', 'application/json')
     return response
 
 # API endpoint for model information
