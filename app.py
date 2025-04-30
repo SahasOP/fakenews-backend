@@ -3,25 +3,16 @@ from flask_cors import CORS
 import numpy as np
 import pandas as pd
 from joblib import load
-import nltk
-from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
-from nltk.tokenize import word_tokenize
-from nltk.sentiment import SentimentIntensityAnalyzer
 import re
 import os
 import string
+import nltk
 
 app = Flask(__name__)
 # Enable CORS with more explicit configuration
 CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
+nltk.data.path.append('./nltk_data')
 
-# Download required NLTK resources
-nltk.download('punkt', quiet=True)
-nltk.download('stopwords', quiet=True)
-nltk.download('wordnet', quiet=True)
-nltk.download('vader_lexicon', quiet=True)
-nltk.download('averaged_perceptron_tagger', quiet=True)
 
 # Initialize lemmatizer, stopwords and sentiment analyzer
 lemmatizer = WordNetLemmatizer()
