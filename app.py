@@ -18,6 +18,7 @@ app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
 
 # Download required NLTK resources
+nltk.download('punkt_tab')
 nltk.download('punkt', quiet=True)
 nltk.download('stopwords', quiet=True)
 nltk.download('wordnet', quiet=True)
@@ -561,37 +562,40 @@ def health_check():
 # API endpoint for analyzing news text
 @app.route('/api/analyze', methods=['POST'])
 def analyze():
-    # Print request details for debugging
-    print(f"Received request: {request.method} {request.path}")
-    print(f"Request headers: {request.headers}")
-    print(f"Request data: {request.data}")
-    
-    # Handle both JSON and form data
-    if request.is_json:
-        data = request.json
-        print(f"Parsed JSON: {data}")
-    else:
-        try:
-            data = request.get_json(force=True)
-            print(f"Forced JSON parsing: {data}")
-        except Exception as e:
-            print(f"Error parsing JSON: {e}")
-            return jsonify({'error': 'Invalid JSON provided'}), 400
-    
-    text = data.get('text')
-    print(f"Extracted text: {text[:100]}...")
-    
-    if not text:
-        return jsonify({'error': 'No text provided'}), 400
-    
-    result = analyze_news(text)
-    print(f"Analysis result: {result['prediction']} with {result['confidence']:.2f} confidence")
-    
-    # Add CORS headers explicitly
-    response = jsonify(result)
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add('Content-Type', 'application/json')
-    return Response(json.dumps(result), mimetype= 'application/json')
+    try:
+        # Print request details for debugging
+        print(f"Received request: {request.method} {request.path}")
+        print(f"Request headers: {request.headers}")
+        print(f"Request data: {request.data}")
+        
+        # Handle both JSON and form data
+        if request.is_json:
+            data = request.json
+            print(f"Parsed JSON: {data}")
+        else:
+            try:
+                data = request.get_json(force=True)
+                print(f"Forced JSON parsing: {data}")
+            except Exception as e:
+                print(f"Error parsing JSON: {e}")
+                return jsonify({'error': 'Invalid JSON provided'}), 400
+        
+        text = data.get('text')
+        print(f"Extracted text: {text[:100]}...")
+        
+        if not text:
+            return jsonify({'error': 'No text provided'}), 400
+        
+        result = analyze_news(text)
+        print(f"Analysis result: {result['prediction']} with {result['confidence']:.2f} confidence")
+        
+        # Add CORS headers explicitly
+        response = jsonify(result)
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Content-Type', 'application/json')
+        return Response(json.dumps(result), mimetype= 'application/json')
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # API endpoint for model information
 @app.route('/api/model-info', methods=['GET'])
